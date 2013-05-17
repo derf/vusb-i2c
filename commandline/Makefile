@@ -27,7 +27,7 @@ CC		= gcc
 CFLAGS	= $(USBFLAGS) -O -Wall
 LIBS	= $(USBLIBS)
 
-PROGRAM = powerSwitch$(EXE_SUFFIX)
+PROGRAM = i2c$(EXE_SUFFIX)
 
 
 all: $(PROGRAM)
@@ -35,8 +35,8 @@ all: $(PROGRAM)
 .c.o:
 	$(CC) $(CFLAGS) -c $<
 
-$(PROGRAM): powerSwitch.o
-	$(CC) -o $(PROGRAM) powerSwitch.o $(LIBS)
+$(PROGRAM): i2c.o
+	$(CC) -o $(PROGRAM) i2c.o $(LIBS)
 
 strip: $(PROGRAM)
 	strip $(PROGRAM)

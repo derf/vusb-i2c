@@ -6,13 +6,13 @@ use an ATTiny and have D+ is connected to INT0, D- to INT1,
 SDA to PB6 and SCL to PB7. Using hardware 1k5 pull-ups on SDA and SCL is
 recommended.
 
-The powerSwitch program in the commandline directory will transmit the I2C
+The i2c program in the commandline directory will transmit the I2C
 start condition and then the bytes it reads on stdin (as decimal numbers,
 separated by newlines). On EOF, a stop condition is transmitted.
 
 So, to set a freshly flashed MicroMoody's color to yellow, you'd have to do:
 
-> ./powerSwitch
+> ./i2c
 35
 0
 0
