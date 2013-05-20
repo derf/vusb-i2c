@@ -27,7 +27,10 @@ CC		= gcc
 CFLAGS	= $(USBFLAGS) -O -Wall
 LIBS	= $(USBLIBS)
 
-PROGRAM = i2c$(EXE_SUFFIX)
+PREFIX ?= /usr/local
+bin_dir = ${DESTDIR}${PREFIX}/bin
+
+PROGRAM = vusb-i2c$(EXE_SUFFIX)
 
 
 all: $(PROGRAM)
@@ -45,6 +48,9 @@ clean:
 	rm -f *.o $(PROGRAM)
 
 install: $(PROGRAM)
-	install -m 0755 i2c /usr/local/bin/i2c
+	install -m 0755 $(PROGRAM) $(bin_dir)/$(PROGRAM)
 
-.PHONY: all strip clean install
+uninstall:
+	rm -f $(bin_dir)/$(PROGRAM)
+
+.PHONY: all strip clean install uninstall
