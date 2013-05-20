@@ -43,3 +43,8 @@ strip: $(PROGRAM)
 
 clean:
 	rm -f *.o $(PROGRAM)
+
+install: $(PROGRAM)
+	install -m 0755 i2c /usr/local/bin/i2c
+
+.PHONY: all strip clean install
