@@ -181,9 +181,9 @@ unsigned char       buffer[8];
 	while (fgets(line, 8, stdin) != NULL) {
 		if (sscanf(line, "%hi\n", &number) == 1) {
 			if ((number >= 0) && (number <= 255)) {
-				for (i = 7; i >= 0; i--) {
+				for (i = 7; i >= -1; i--) {
 					usleep(3);
-					if (number & (1 << i)) {
+					if ((i < 0) || (number & (1 << i))) {
 						SDA_1;
 					} else {
 						SDA_0;
