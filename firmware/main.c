@@ -38,26 +38,16 @@ static uchar    permstatus = 0;
 static void outputByte(uchar b)
 {
 	DDRB  = ~b;
-	PORTB = b;
 }
 
 static uchar    computeTemporaryChanges(void)
 {
-uchar   i, status = 0, mask = 1;
-
-    for(i=0;i<8;i++){
-        if(actionTimers[i])
-            status |= mask;
-        mask <<= 1;
-    }
-    return status;
+	return 0;
 }
 
 static void computeOutputStatus(void)
 {
-uchar   status = permstatus ^ computeTemporaryChanges();
-
-    outputByte(status);
+    outputByte(permstatus);
 }
 
 /* We poll for the timer interrupt instead of declaring an interrupt handler
@@ -92,7 +82,7 @@ static uchar    replyBuf[2];
         return 2;
     }
     if(rq->bRequest == 1){  /* GET_STATUS -> result = 2 bytes */
-        replyBuf[0] = status;
+        replyBuf[0] = PINB;
         replyBuf[1] = computeTemporaryChanges();
         return 2;
     }
@@ -132,7 +122,7 @@ uchar   i;
 
     wdt_enable(WDTO_1S);
     odDebugInit();
-    DDRB = 0xff;
+    DDRB = 0;
     DDRD = ~USBMASK;   /* all outputs except PD2 = INT0 */
     PORTD = 0;
     PORTB = 0;          /* no pullups on USB pins */
@@ -186,7 +176,7 @@ int main(void)
     DDRD = ~USBMASK;   /* all outputs except PD2 = INT0 */
 #endif
     PORTB = 0;          /* no pullups on USB pins */
-    DDRB = 0xff;    /* all outputs except USB data */
+    DDRB = 0;    /* all outputs except USB data */
     usbInit();
     sei();
     for(;;){    /* main event loop */
