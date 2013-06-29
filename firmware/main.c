@@ -32,7 +32,7 @@ Application examples:
 #ifndef TEST_DRIVER_SIZE    /* define this to check out size of pure driver */
 
 static uchar    actionTimers[8];
-static uchar    permstatus = 0;
+static uchar    permstatus = 255;
 
 /* This is the AT90S2313 version of the routine. Change for others. */
 static void outputByte(uchar b)
