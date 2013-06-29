@@ -21,6 +21,11 @@ obtained from http://libusb.sourceforge.net/.
 #include <string.h>
 #include <usb.h>    /* this is libusb, see http://libusb.sourceforge.net/ */
 
+
+#define BIT_SDA 6
+#define BIT_SCL 7
+
+
 #define USBDEV_SHARED_VENDOR    0x16C0  /* VOTI */
 #define USBDEV_SHARED_PRODUCT   0x05DC  /* Obdev's free shared PID */
 /* Use obdev's generic shared VID/PID pair and follow the rules outlined
@@ -32,6 +37,9 @@ obtained from http://libusb.sourceforge.net/.
 #define PSCMD_ON    2
 #define PSCMD_OFF   3
 /* These are the vendor specific SETUP commands implemented by our USB device */
+
+
+usb_dev_handle      *handle = NULL;
 
 static int  usbGetStringAscii(usb_dev_handle *dev, int index, int langid, char *buf, int buflen)
 {
@@ -131,30 +139,93 @@ static int          didUsbInit = 0;
 }
 
 
+static unsigned char get_status()
+{
+	unsigned char buffer[8];
+	int nBytes = usb_control_msg(handle, USB_TYPE_VENDOR | USB_RECIP_DEVICE |
+			USB_ENDPOINT_IN, PSCMD_GET, 0, 0, (char *)buffer, sizeof(buffer), 5000);
+
+	if (nBytes < 2) {
+		fprintf(stderr, "ERR: read status: got %d bytes, expected 2\n", nBytes);
+		exit(1);
+	}
+	return buffer[0];
+}
+
+static void verify_low(unsigned char bit, char *bitname)
+{
+	int i;
+	for (i = 0; i < 10; i++) {
+		if (~get_status() & bit)
+			return;
+		usleep(10);
+	}
+	fprintf(stderr, "%s stuck high for >1ms\n", bitname);
+}
+
+static void verify_high(unsigned char bit, char *bitname)
+{
+	int i;
+	for (i = 0; i < 100; i++) {
+		if (get_status() & bit)
+			return;
+		usleep(10);
+	}
+	fprintf(stderr, "%s stuck low for >1ms\n", bitname);
+}
+
+static void verify_sda_low()
+{
+	verify_low(BIT_SDA, "SDA");
+}
+
+static void verify_sda_high()
+{
+	verify_high(BIT_SDA, "SDA");
+}
+
+static void verify_scl_low()
+{
+	verify_low(BIT_SCL, "SCL");
+}
+
+static void verify_scl_high()
+{
+	verify_high(BIT_SCL, "SCL");
+}
+
+
+
+/*
+ * for the record: Yes, this is ugly.
+ *
+ * Firmware: DDRB  = ~b  (with hardware pull-ups and PORTB = 0)
+ * So to pull an output high (1), we turn it on, which sets it as input
+ * -> pull-up works. for low (0): turn it off -> output -> pulled low
+ */
 
 #define SDA_1 usb_control_msg(handle, USB_TYPE_VENDOR \
 		| USB_RECIP_DEVICE | USB_ENDPOINT_IN, \
-		PSCMD_ON, 0, 6, (char *)buffer, sizeof(buffer), \
+		PSCMD_ON, 0, BIT_SDA, (char *)buffer, sizeof(buffer), \
 		5000);
 
 #define SDA_0 usb_control_msg(handle, USB_TYPE_VENDOR \
 		| USB_RECIP_DEVICE | USB_ENDPOINT_IN, \
-		PSCMD_OFF, 0, 6, (char *)buffer, sizeof(buffer), \
+		PSCMD_OFF, 0, BIT_SDA, (char *)buffer, sizeof(buffer), \
 		5000);
 
 #define SCL_1 usb_control_msg(handle, USB_TYPE_VENDOR \
 		| USB_RECIP_DEVICE | USB_ENDPOINT_IN, \
-		PSCMD_ON, 0, 7, (char *)buffer, sizeof(buffer), \
+		PSCMD_ON, 0, BIT_SCL, (char *)buffer, sizeof(buffer), \
 		5000);
 
 #define SCL_0 usb_control_msg(handle, USB_TYPE_VENDOR \
 		| USB_RECIP_DEVICE | USB_ENDPOINT_IN, \
-		PSCMD_OFF, 0, 7, (char *)buffer, sizeof(buffer), \
+		PSCMD_OFF, 0, BIT_SCL, (char *)buffer, sizeof(buffer), \
 		5000);
 
 int main(int argc, char **argv)
 {
-usb_dev_handle      *handle = NULL;
 unsigned char       buffer[8];
 
     usb_init();
@@ -175,42 +246,49 @@ unsigned char       buffer[8];
 	SDA_1;
 	usleep(1000);
 	SDA_0;
-	usleep(10);
+	usleep(100);
 	SCL_0;
+	verify_sda_low();
+	verify_scl_low();
 
 	while (fgets(line, 8, stdin) != NULL) {
 		if (sscanf(line, "%hi\n", &number) == 1) {
 			if ((number >= 0) && (number <= 255)) {
-				for (i = 7; i >= -1; i--) {
-					usleep(3);
+				for (i = 7; i >= 0; i--) {
 					if ((i < 0) || (number & (1 << i))) {
 						SDA_1;
+						verify_sda_high();
 					} else {
 						SDA_0;
+						verify_sda_low();
 					}
-					usleep(3);
+					usleep(2);
 					SCL_1;
-					usleep(3);
+					usleep(10);
+					verify_scl_high();
 					SCL_0;
+					usleep(2);
+					verify_scl_low();
 				}
-				usleep(50);
 			}
 		}
 		if (strcmp(line, "push\n") == 0) {
 			SCL_1;
-			usleep(3);
+			usleep(30000);
 			SDA_1;
-			usleep(10);
+			usleep(100000);
 			SDA_0;
-			usleep(10);
+			usleep(100000);
 			SCL_0;
 		}
 	}
 
 	SCL_1;
-	usleep(3);
+	usleep(10);
+	verify_scl_high();
 	SDA_1;
 	usleep(10);
+	verify_sda_high();
 
     usb_close(handle);
     return 0;
