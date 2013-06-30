@@ -156,7 +156,7 @@ static void verify_low(unsigned char bit, char *bitname)
 {
 	int i;
 	for (i = 0; i < 10; i++) {
-		if (~get_status() & bit)
+		if (~get_status() & (1 << bit))
 			return;
 		usleep(10);
 	}
@@ -167,7 +167,7 @@ static void verify_high(unsigned char bit, char *bitname)
 {
 	int i;
 	for (i = 0; i < 100; i++) {
-		if (get_status() & bit)
+		if (get_status() & (1 << bit))
 			return;
 		usleep(10);
 	}
@@ -242,33 +242,50 @@ unsigned char       buffer[8];
 	signed char i;
 	short int number;
 
-	SCL_1;
 	SDA_1;
+	SCL_1;
 	usleep(1000);
 	SDA_0;
-	usleep(100);
+	usleep(1000);
 	SCL_0;
 	verify_sda_low();
 	verify_scl_low();
+	puts("ready");
 
 	while (fgets(line, 8, stdin) != NULL) {
 		if (sscanf(line, "%hi\n", &number) == 1) {
-			if ((number >= 0) && (number <= 255)) {
-				for (i = 7; i >= 0; i--) {
-					if ((i < 0) || (number & (1 << i))) {
+			if ((number >= 0) && (number <= 256)) {
+				for (i = 7; i >= -1; i--) {
+					if ((i < 0) || (number == 256) || (number & (1 << i))) {
+						puts("sda ↑");
 						SDA_1;
-						verify_sda_high();
+						//verify_sda_high();
 					} else {
+						puts("sda ↓");
 						SDA_0;
-						verify_sda_low();
+						//verify_sda_low();
 					}
-					usleep(2);
+					usleep(10);
+					puts("scl ↑");
 					SCL_1;
 					usleep(10);
-					verify_scl_high();
+					//verify_scl_high();
+					if (i < 0) {
+						if (get_status() & (1 << BIT_SDA))
+							puts("> NAK");
+						else
+							puts("> ACK");
+					}
+					else if (number == 256) {
+						if (get_status() & (1 << BIT_SDA))
+							puts("1");
+						else
+							puts("0");
+					}
+					puts("scl ↓");
 					SCL_0;
-					usleep(2);
-					verify_scl_low();
+					usleep(10);
+					//verify_scl_low();
 				}
 			}
 		}
