@@ -33,13 +33,16 @@ bin_dir = ${DESTDIR}${PREFIX}/bin
 PROGRAM = vusb-i2c$(EXE_SUFFIX)
 
 
-all: $(PROGRAM)
+all: $(PROGRAM) vusb-i2cdetect
 
 .c.o:
 	$(CC) $(CFLAGS) -c $<
 
 $(PROGRAM): i2c.o
 	$(CC) -o $(PROGRAM) i2c.o $(LIBS)
+
+vusb-i2cdetect: i2cdetect.o
+	$(CC) -o vusb-i2cdetect i2cdetect.o $(LIBS)
 
 strip: $(PROGRAM)
 	strip $(PROGRAM)
