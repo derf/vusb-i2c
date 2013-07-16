@@ -197,32 +197,28 @@ static void verify_scl_high()
 
 
 /*
- * for the record: Yes, this is ugly.
- *
  * Firmware: DDRB  = ~b  (with hardware pull-ups and PORTB = 0)
  * So to pull an output high (1), we turn it on, which sets it as input
  * -> pull-up works. for low (0): turn it off -> output -> pulled low
  */
 
-#define SDA_1 usb_control_msg(handle, USB_TYPE_VENDOR \
-		| USB_RECIP_DEVICE | USB_ENDPOINT_IN, \
-		PSCMD_ON, 0, BIT_SDA, (char *)buffer, sizeof(buffer), \
-		5000);
+void set_sda(char value) {
+	// discarded
+	unsigned char buffer[8];
 
-#define SDA_0 usb_control_msg(handle, USB_TYPE_VENDOR \
-		| USB_RECIP_DEVICE | USB_ENDPOINT_IN, \
-		PSCMD_OFF, 0, BIT_SDA, (char *)buffer, sizeof(buffer), \
-		5000);
+	usb_control_msg(handle, USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
+			(value ? PSCMD_ON : PSCMD_OFF), 0, BIT_SDA,
+			(char *)buffer, sizeof(buffer), 5000);
+}
 
-#define SCL_1 usb_control_msg(handle, USB_TYPE_VENDOR \
-		| USB_RECIP_DEVICE | USB_ENDPOINT_IN, \
-		PSCMD_ON, 0, BIT_SCL, (char *)buffer, sizeof(buffer), \
-		5000);
+void set_scl(char value) {
+	// discarded
+	unsigned char buffer[8];
 
-#define SCL_0 usb_control_msg(handle, USB_TYPE_VENDOR \
-		| USB_RECIP_DEVICE | USB_ENDPOINT_IN, \
-		PSCMD_OFF, 0, BIT_SCL, (char *)buffer, sizeof(buffer), \
-		5000);
+	usb_control_msg(handle, USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
+			(value ? PSCMD_ON : PSCMD_OFF), 0, BIT_SCL,
+			(char *)buffer, sizeof(buffer), 5000);
+}
 
 int main(int argc, char **argv)
 {
@@ -242,12 +238,12 @@ unsigned char       buffer[8];
 	signed char i;
 	short int number;
 
-	SDA_1;
-	SCL_1;
+	set_sda(1);
+	set_scl(1);
 	usleep(1000);
-	SDA_0;
+	set_sda(0);
 	usleep(1000);
-	SCL_0;
+	set_scl(0);
 	verify_sda_low();
 	verify_scl_low();
 	puts("ready");
@@ -258,16 +254,16 @@ unsigned char       buffer[8];
 				for (i = 7; i >= -1; i--) {
 					if ((i < 0) || (number == 256) || (number & (1 << i))) {
 						puts("sda ↑");
-						SDA_1;
+						set_sda(1);
 						//verify_sda_high();
 					} else {
 						puts("sda ↓");
-						SDA_0;
+						set_sda(0);
 						//verify_sda_low();
 					}
 					usleep(10);
 					puts("scl ↑");
-					SCL_1;
+					set_scl(1);
 					usleep(10);
 					//verify_scl_high();
 					if (i < 0) {
@@ -283,27 +279,27 @@ unsigned char       buffer[8];
 							puts("0");
 					}
 					puts("scl ↓");
-					SCL_0;
+					set_scl(0);
 					usleep(10);
 					//verify_scl_low();
 				}
 			}
 		}
 		if (strcmp(line, "push\n") == 0) {
-			SCL_1;
+			set_scl(1);
 			usleep(30000);
-			SDA_1;
+			set_sda(1);
 			usleep(100000);
-			SDA_0;
+			set_sda(0);
 			usleep(100000);
-			SCL_0;
+			set_scl(0);
 		}
 	}
 
-	SCL_1;
+	set_scl(1);
 	usleep(10);
 	verify_scl_high();
-	SDA_1;
+	set_sda(1);
 	usleep(10);
 	verify_sda_high();
 
