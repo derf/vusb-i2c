@@ -1,2 +1,2 @@
-/commandline/vusb-i2c
-/commandline/i2c.o
+/commandline/vusb-*
+/commandline/*.o
