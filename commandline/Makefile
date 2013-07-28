@@ -9,7 +9,7 @@ LIBS      = $(USBLIBS)
 PREFIX ?= /usr/local
 bin_dir = ${DESTDIR}${PREFIX}/bin
 
-PROGRAMS = vusb-i2c
+PROGRAMS = vusb-i2c vusb-i2cdetect
 
 all: $(PROGRAMS)
 

@@ -6,20 +6,12 @@
 
 int main(int argc, char **argv)
 {
-	i2c_init();
-
 	char line[8];
 	signed char i;
 	short int number;
 
-	set_sda(1);
-	set_scl(1);
-	usleep(1000);
-	set_sda(0);
-	usleep(1000);
-	set_scl(0);
-	verify_sda_low();
-	verify_scl_low();
+	i2c_init();
+	i2c_start();
 	puts("ready");
 
 	while (fgets(line, 8, stdin) != NULL) {
@@ -60,23 +52,12 @@ int main(int argc, char **argv)
 			}
 		}
 		if (strcmp(line, "push\n") == 0) {
-			set_scl(1);
-			usleep(30000);
-			set_sda(1);
-			usleep(100000);
-			set_sda(0);
-			usleep(100000);
-			set_scl(0);
+			i2c_stop();
+			i2c_start();
 		}
 	}
 
-	set_scl(1);
-	usleep(10);
-	verify_scl_high();
-	set_sda(1);
-	usleep(10);
-	verify_sda_high();
-
+	i2c_stop();
 	i2c_deinit();
 	return 0;
 }

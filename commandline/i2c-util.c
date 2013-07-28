@@ -16,6 +16,7 @@ Linux, FreeBSD, Mac OS X and other Unix operating systems. Libusb can be
 obtained from http://libusb.sourceforge.net/.
 */
 
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -236,6 +237,56 @@ void set_scl(char value)
 			USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
 			(value ? PSCMD_ON : PSCMD_OFF), 0, BIT_SCL,
 			(char *)buffer, sizeof(buffer), 5000);
+}
+
+unsigned char i2c_tx_byte(unsigned char byte)
+{
+	signed char i;
+	unsigned char ack = 0;
+
+	for (i = 7; i >= -1; i--) {
+		if ((i < 0) || (byte & (1 << i))) {
+			set_sda(1);
+		}
+		else {
+			set_sda(0);
+		}
+		usleep(10);
+		set_scl(1);
+		usleep(10);
+		if (i < 0) {
+			if (get_status() & (1 << BIT_SDA))
+				ack = 0;
+			else
+				ack = 1;
+		}
+		set_scl(0);
+		usleep(10);
+	}
+
+	return ack;
+}
+
+void i2c_start()
+{
+	set_sda(1);
+	set_scl(1);
+	usleep(1000);
+	set_sda(0);
+	usleep(1000);
+	set_scl(0);
+	verify_sda_low();
+	verify_scl_low();
+}
+
+void i2c_stop()
+{
+	set_scl(1);
+	usleep(100);
+	verify_scl_high();
+	set_sda(1);
+	usleep(100);
+	verify_sda_high();
 }
 
 void i2c_init()
