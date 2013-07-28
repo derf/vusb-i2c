@@ -9,7 +9,7 @@ LIBS      = $(USBLIBS)
 PREFIX ?= /usr/local
 bin_dir = ${DESTDIR}${PREFIX}/bin
 
-PROGRAMS = vusb-i2c vusb-i2cdetect vusb-i2cwrite vusb-i2cget
+PROGRAMS = vusb-i2c vusb-i2cdetect vusb-i2cset vusb-i2cget
 
 all: $(PROGRAMS)
 
@@ -19,7 +19,7 @@ all: $(PROGRAMS)
 i2c.o: i2c.c i2c-util.c i2c-util.h
 i2c-util.o: i2c-util.c
 i2cdetect.o: i2cdetect.c i2c-util.c i2c-util.h
-i2cwrite.o: i2cwrite.c i2c-util.c i2c-util.h
+i2cset.o: i2cset.c i2c-util.c i2c-util.h
 i2cget.o: i2cget.c i2c-util.c i2c-util.h
 
 vusb-i2c: i2c.o i2c-util.o
@@ -28,7 +28,7 @@ vusb-i2c: i2c.o i2c-util.o
 vusb-i2cdetect: i2cdetect.o i2c-util.o
 	$(CC) -o $@ $^ $(LIBS)
 
-vusb-i2cwrite: i2cwrite.o i2c-util.o
+vusb-i2cset: i2cset.o i2c-util.o
 	$(CC) -o $@ $^ $(LIBS)
 
 vusb-i2cget: i2cget.o i2c-util.o
