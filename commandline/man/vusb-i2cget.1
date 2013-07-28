@@ -1,0 +1,44 @@
+.Dd Jule 28, 2013
+.Dt VUSB-I2CGET 1
+.Os
+.
+.
+.Sh NAME
+.
+.Nm vusb-i2cget
+.Nd read byte from an I2C device
+.
+.
+.Sh SYNOPSIS
+.
+.Nm
+.Ar address
+.Ar register
+.
+.
+.Sh VERSION
+.
+This manual documents
+.Nm
+UNRELEASED
+.
+.
+.Sh DESCRIPTION
+.
+.Nm
+reads one byte from an I2C device.
+It first writes
+.Ar register
+to the device, then starts a new read connection and reads one byte.
+This byte is printed to stdout as an unsigned char.
+.
+.
+.Sh AUTHOR
+.
+Copyright (C) 2013 by Daniel Friesel
+.Aq derf@finalrewind.org
+.
+.
+.Sh LICENSE
+.
+to be determined (BSD-ish)

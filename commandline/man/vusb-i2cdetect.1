@@ -1,0 +1,64 @@
+.Dd Jule 28, 2013
+.Dt VUSB-I2CDETECT 1
+.Os
+.
+.
+.Sh NAME
+.
+.Nm vusb-i2cdetect
+.Nd detect I2C devices
+.
+.
+.Sh SYNOPSIS
+.
+.Nm
+.
+.
+.Sh VERSION
+.
+This manual documents
+.Nm
+UNRELEASED
+.
+.
+.Sh DESCRIPTION
+.
+.Nm
+scans a vusb-i2c bus for connected devices and prints a result table to its
+standard output. A
+.Qq --
+entry means no device responded, while a hexadecimal address means there is
+a device acknowledging that address.
+.
+.Pp
+.
+In detail, for each I2C address between 0x00 and 0x7f (even the special ones),
+the following is done:
+
+.Bl -bullet
+.
+.It
+the bus is reset (START condition)
+.
+.It
+an address (with the read byte set) is transmitted
+.
+.It
+the transmission is terminated without reading any data (STOP condition)
+.
+.El
+
+If SDA is pulled low in the ACK cycle of the address transmission, it is
+considered to be a device listening for that address. If
+.Nm
+reports devices on all checked addresses, this may indicate a stuck SDA line,
+either caused by a hardware bug or a malfunctioning I2C device.
+.
+.Sh AUTHOR
+.
+Copyright (C) 2013 by Daniel Friesel
+.Aq derf@finalrewind.org
+.
+.Sh LICENSE
+.
+to be determined (BSD-ish)

@@ -8,6 +8,7 @@ LIBS      = $(USBLIBS)
 
 PREFIX ?= /usr/local
 bin_dir = ${DESTDIR}${PREFIX}/bin
+man_dir = ${DESTDIR}${PREFIX}/man/man1
 
 PROGRAMS = vusb-i2c vusb-i2cdetect vusb-i2cset vusb-i2cget
 
@@ -39,8 +40,12 @@ clean:
 
 install:
 	install -m 4755 $(PROGRAMS) $(bin_dir)
+	install -m 0644 man/vusb-i2cdetect.1 man/vusb-i2cget.1 man/vusb-i2cset.1 \
+	  $(man_dir)
 
 uninstall:
-	rm -rf $(bin_dir)/vusb-i2c $(bin_dir)/vusb-i2cdetect
+	rm -f $(bin_dir)/vusb-i2c $(bin_dir)/vusb-i2cdetect
+	rm -f $(bin_dir)/vusb-i2cget $(bin_dir)/vusb-i2cset
+	rm -f $(man_dir)/vusb-i2cdetect.1 $(man_dir)/vusb-i2cget.1 $(man_dir)vusb-i2cset.1
 
 .PHONY: all strip clean install uninstall

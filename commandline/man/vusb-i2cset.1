@@ -1,0 +1,61 @@
+.Dd Jule 28, 2013
+.Dt VUSB-I2CSET 1
+.Os
+.
+.
+.Sh NAME
+.
+.Nm vusb-i2cset
+.Nd send data to an I2C device
+.
+.
+.Sh SYNOPSIS
+.
+.Nm
+.Ar address
+.Ar data ...
+.
+.
+.Sh VERSION
+.
+This manual documents
+.Nm
+UNRELEASED
+.
+.
+.Sh DESCRIPTION
+.
+.Nm
+sends bytes to an I2C device. It transmits a START condition, then the
+.Ar address
+with the R/W bit set to write, and then all specified bytes.
+.
+.
+.Sh EXIT STATUS
+.
+.Bl -tag -width indnet
+.
+.It 0
+.
+after transmitting the
+.Ar address ,
+an ACK was received
+.
+.It 1
+.
+after transmitting the
+.Ar address ,
+a NAK was received
+.
+.El
+.
+.
+.Sh AUTHOR
+.
+Copyright (C) 2013 by Daniel Friesel
+.Aq derf@finalrewind.org
+.
+.
+.Sh LICENSE
+.
+to be determined (BSD-ish)

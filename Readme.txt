@@ -3,27 +3,17 @@ VUSB-based USB to I2C conversion board.
 This setup assumes that you have a VUSB board with level conversion on D+ and D-
 <http://vusb.wdfiles.com/local--files/hardware/level-conversion-with-zener.gif>,
 use an ATTiny and have D+ is connected to INT0, D- to INT1,
-SDA to PB6 and SCL to PB7. Using hardware 1k5 pull-ups on SDA and SCL is
-recommended.
+SDA to PB6 and SCL to PB7. hardware pull-ups must be connected to SDA and SCL.
 
-The i2c program in the commandline directory will transmit the I2C
-start condition and then the bytes it reads on stdin (as decimal numbers,
-separated by newlines). On EOF, a stop condition is transmitted.
+The commandline utilities are meant to be similar to the i2c-tools utilities.
+vusb-i2cdetect can be used to scan a bus, while vusb-i2cget and vusb-i2cset
+read/write data.
 
-So, to set a freshly flashed MicroMoody's color to yellow, you'd have to do:
+For instance, to set a MicroMoody's color to yellow:
+> vusb-i2cset 17 0 0 255 255 0 0 1
 
-> ./i2c
-35
-0
-0
-255
-255
-0
-0
-1
-<Ctrl+D>
-
-
+Or, to read out the temperature from a TC74 thermal sensor:
+> vusb-i2cget 77 0
 
 
 
