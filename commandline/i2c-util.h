@@ -11,7 +11,7 @@ void set_scl(char value);
 
 unsigned char get_status();
 unsigned char i2c_tx_byte(unsigned char byte);
-unsigned char i2c_rx_byte();
+unsigned char i2c_rx_byte(unsigned char send_ack);
 
 void i2c_start();
 void i2c_stop();

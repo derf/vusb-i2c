@@ -267,17 +267,21 @@ unsigned char i2c_tx_byte(unsigned char byte)
 	return ack;
 }
 
-unsigned char i2c_rx_byte()
+unsigned char i2c_rx_byte(unsigned char send_ack)
 {
 	signed char i;
 	unsigned char ret = 0;
 
 	set_sda(1);
 	for (i = 7; i >= -1; i--) {
+		if (( i < 0) && send_ack)
+			set_sda(0);
 		set_scl(1);
 		usleep(10);
 		if ((i >= 0) && ( get_status() & (1 << BIT_SDA)))
 			ret |= (1 << i);
+		if (( i < 0) && send_ack)
+			set_sda(1);
 		set_scl(0);
 		usleep(10);
 	}
