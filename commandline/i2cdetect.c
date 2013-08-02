@@ -4,13 +4,9 @@
 #include <string.h>
 #include "i2c-util.h"
 
-#define BIT_SDA 6
-#define BIT_SCL 7
-
 
 int main(int argc, char **argv)
 {
-	signed char i;
 	unsigned char id, i2cid;
 
 	i2c_init();
