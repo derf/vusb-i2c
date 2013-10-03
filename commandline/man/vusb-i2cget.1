@@ -32,6 +32,32 @@ It first writes
 to the device, then starts a new read connection and reads one byte.
 This byte is printed to stdout as an unsigned char.
 .
+.Ar address
+and
+.Ar register
+are decimal by default, use the
+.Qq 0x
+prefix for hexadecimal numbers
+.
+.
+.Sh EXIT STATUS
+.
+.Bl -tag -width indent
+.
+.It 0
+.
+Device queried successfully (ACK after address byte)
+.
+.It 1
+.
+Device did not respond (NAK after address byte)
+.
+.It 2
+.
+Bad input (not a number)
+.
+.El
+.
 .
 .Sh AUTHOR
 .

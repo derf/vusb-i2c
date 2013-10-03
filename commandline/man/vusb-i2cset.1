@@ -30,6 +30,12 @@ sends bytes to an I2C device. It transmits a START condition, then the
 .Ar address
 with the R/W bit set to write, and then all specified bytes.
 .
+.Ar address
+and
+.Ar data
+are decimal by default, use the
+.Qq 0x
+prefix for hexadecimal numbers
 .
 .Sh EXIT STATUS
 .
@@ -47,9 +53,14 @@ after transmitting the
 .Ar address ,
 a NAK was received
 .
+.It 2
+.
+Bad input (not a number)
+.
 .El
 .
 .
+
 .Sh AUTHOR
 .
 Copyright (C) 2013 by Daniel Friesel

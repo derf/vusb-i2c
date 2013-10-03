@@ -7,6 +7,7 @@
 int main(int argc, char **argv)
 {
 	int i, address, got_ack;
+	char *conv_err;
 
 	i2c_init();
 	i2c_start();
@@ -16,9 +17,14 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	address = atoi(argv[1]) << 1;
+	address = strtol(argv[1], &conv_err, 0);
 
-	got_ack = i2c_tx_byte(address);
+	if (conv_err && *conv_err) {
+		fprintf(stderr, "Conversion error at '%s'", conv_err);
+		return 2;
+	}
+
+	got_ack = i2c_tx_byte(address << 1);
 
 	for (i = 2; i < argc; i++) {
 		i2c_tx_byte(atoi(argv[i]));

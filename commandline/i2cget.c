@@ -6,9 +6,10 @@
 
 int main(int argc, char **argv)
 {
-	int address, command;
+	int address, command, got_ack;
 	unsigned int ret;
 	char mode = 'c';
+	char *conv_err;
 
 	i2c_init();
 	i2c_start();
@@ -18,8 +19,19 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	address = atoi(argv[1]);
-	command = atoi(argv[2]);
+	address = strtol(argv[1], &conv_err, 0);
+
+	if (conv_err && *conv_err) {
+		fprintf(stderr, "address: Conversion error at '%s'", conv_err);
+		return 2;
+	}
+
+	command = strtol(argv[2], &conv_err, 0);
+
+	if (conv_err && *conv_err) {
+		fprintf(stderr, "command: conversion error at '%s'", conv_err);
+		return 2;
+	}
 
 	if (argc == 4)
 		mode = argv[3][0];
@@ -27,7 +39,7 @@ int main(int argc, char **argv)
 	i2c_tx_byte((address << 1) | 0);
 	i2c_tx_byte(command);
 	i2c_start();
-	i2c_tx_byte((address << 1) | 1);
+	got_ack = i2c_tx_byte((address << 1) | 1);
 
 	if (mode == 'i') {
 		ret = i2c_rx_byte(1);
@@ -41,5 +53,5 @@ int main(int argc, char **argv)
 
 	printf("%i\n", ret);
 
-	return 0;
+	return got_ack ? 0 : 1;
 }
