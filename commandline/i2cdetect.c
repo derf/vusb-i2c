@@ -30,11 +30,11 @@ int main(int argc, char **argv)
 		else
 			fputs(" --", stdout);
 
-		i2c_stop();
 	}
 
 	fputs("\n", stdout);
 
+	i2c_stop();
 	i2c_deinit();
 	return 0;
 }
