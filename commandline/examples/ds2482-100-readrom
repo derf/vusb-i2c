@@ -1,0 +1,33 @@
+#!/bin/sh
+# DS2482-100 Single Channel 1-Wire Master
+
+vusb-i2cset 0x18 0xf0 || echo "Failed to reset chip"
+vusb-i2cset 0x18 0xd2 0xf0 || echo "Failed to set config"
+vusb-i2cset 0x18 0xb4 || echo "Failed to initiate presence detection (OWR)"
+
+ret=$(( $(vusb-i2cget 0x18 0xe1 0xf0) & 0x02 ))
+
+if [ "${ret}" = 0 ]; then
+	echo "No presence detected"
+	exit 1
+fi
+
+vusb-i2cset 0x18 0xa5 0x33 || echo "failed to issue READ ROM"
+vusb-i2cset 0x18 0x96 || echo "failed to initiate read"
+b8=$(vusb-i2cget 0x18 0xe1 0xe1)
+vusb-i2cset 0x18 0x96 || echo "failed to initiate read"
+b7=$(vusb-i2cget 0x18 0xe1 0xe1)
+vusb-i2cset 0x18 0x96 || echo "failed to initiate read"
+b6=$(vusb-i2cget 0x18 0xe1 0xe1)
+vusb-i2cset 0x18 0x96 || echo "failed to initiate read"
+b5=$(vusb-i2cget 0x18 0xe1 0xe1)
+vusb-i2cset 0x18 0x96 || echo "failed to initiate read"
+b4=$(vusb-i2cget 0x18 0xe1 0xe1)
+vusb-i2cset 0x18 0x96 || echo "failed to initiate read"
+b3=$(vusb-i2cget 0x18 0xe1 0xe1)
+vusb-i2cset 0x18 0x96 || echo "failed to initiate read"
+b2=$(vusb-i2cget 0x18 0xe1 0xe1)
+vusb-i2cset 0x18 0x96 || echo "failed to initiate read"
+b1=$(vusb-i2cget 0x18 0xe1 0xe1)
+
+printf "%02x%02x%02x%02x%02x%02x%02x%02x" $b1 $b2 $b3 $b4 $b5 $b6 $b7 $b8
