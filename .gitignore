@@ -1,2 +1,4 @@
 /commandline/vusb-*
-/commandline/*.o
+/firmware/*.hex
+/firmware/*.bin
+*.o
