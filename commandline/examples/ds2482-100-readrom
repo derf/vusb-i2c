@@ -1,8 +1,14 @@
 #!/bin/sh
 # DS2482-100 Single Channel 1-Wire Master
 
+
+CONFIG=0xf0
+if [ "${1}" = overdrive ]; then
+	CONFIG=0x78
+fi
+
 vusb-i2cset 0x18 0xf0 || echo "Failed to reset chip"
-vusb-i2cset 0x18 0xd2 0xf0 || echo "Failed to set config"
+vusb-i2cset 0x18 0xd2 $CONFIG || echo "Failed to set config"
 vusb-i2cset 0x18 0xb4 || echo "Failed to initiate presence detection (OWR)"
 
 ret=$(( $(vusb-i2cget 0x18 0xe1 0xf0) & 0x02 ))
@@ -13,6 +19,7 @@ if [ "${ret}" = 0 ]; then
 fi
 
 vusb-i2cset 0x18 0xa5 0x33 || echo "failed to issue READ ROM"
+
 vusb-i2cset 0x18 0x96 || echo "failed to initiate read"
 b8=$(vusb-i2cget 0x18 0xe1 0xe1)
 vusb-i2cset 0x18 0x96 || echo "failed to initiate read"
