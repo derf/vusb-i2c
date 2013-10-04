@@ -251,9 +251,9 @@ unsigned char i2c_tx_byte(unsigned char byte)
 		else {
 			set_sda(0);
 		}
-		usleep(10);
+		usleep(100);
 		set_scl(1);
-		usleep(10);
+		usleep(100);
 		if (i < 0) {
 			if (get_status() & (1 << BIT_SDA))
 				ack = 0;
@@ -261,7 +261,7 @@ unsigned char i2c_tx_byte(unsigned char byte)
 				ack = 1;
 		}
 		set_scl(0);
-		usleep(10);
+		usleep(100);
 	}
 
 	return ack;
@@ -277,13 +277,13 @@ unsigned char i2c_rx_byte(unsigned char send_ack)
 		if (( i < 0) && send_ack)
 			set_sda(0);
 		set_scl(1);
-		usleep(10);
+		usleep(100);
 		if ((i >= 0) && ( get_status() & (1 << BIT_SDA)))
 			ret |= (1 << i);
 		if (( i < 0) && send_ack)
 			set_sda(1);
 		set_scl(0);
-		usleep(10);
+		usleep(100);
 	}
 
 	return ret;
