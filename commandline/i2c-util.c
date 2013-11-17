@@ -156,6 +156,21 @@ static int usbOpenDevice(usb_dev_handle ** device, int vendor, char *vendorName,
 	return errorCode;
 }
 
+void i2c_getopt(int argc, char **argv)
+{
+	int opt;
+	while ((opt = getopt(argc, argv, "c:d:")) != EOF) {
+		switch (opt) {
+		case 'c':
+			bit_scl = atoi(optarg);
+			break;
+		case 'd':
+			bit_sda = atoi(optarg);
+			break;
+		}
+	}
+}
+
 unsigned char get_status()
 {
 	unsigned char buffer[8];

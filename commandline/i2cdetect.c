@@ -9,6 +9,7 @@ int main(int argc, char **argv)
 {
 	unsigned char id, i2cid;
 
+	i2c_getopt(argc, argv);
 	i2c_init();
 
 	fputs("     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f", stdout);

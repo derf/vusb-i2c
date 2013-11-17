@@ -9,6 +9,7 @@ int main(int argc, char **argv)
 	int i, address, cmdbuf, got_ack;
 	char *conv_err;
 
+	i2c_getopt(argc, argv);
 	i2c_init();
 	i2c_start();
 

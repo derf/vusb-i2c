@@ -10,6 +10,7 @@ int main(int argc, char **argv)
 	unsigned int ret;
 	char *conv_err;
 
+	i2c_getopt(argc, argv);
 	i2c_init();
 	i2c_start();
 
