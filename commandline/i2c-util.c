@@ -36,6 +36,9 @@ obtained from http://libusb.sourceforge.net/.
 #define PSCMD_OFF   3
 /* These are the vendor specific SETUP commands implemented by our USB device */
 
+char bit_sda = 6;
+char bit_scl = 7;
+
 usb_dev_handle *handle = NULL;
 
 static int usbGetStringAscii(usb_dev_handle * dev, int index, int langid, char
@@ -193,22 +196,22 @@ static void verify_high(unsigned char bit, char *bitname)
 
 void verify_sda_low()
 {
-	verify_low(BIT_SDA, "SDA");
+	verify_low(bit_sda, "SDA");
 }
 
 void verify_sda_high()
 {
-	verify_high(BIT_SDA, "SDA");
+	verify_high(bit_sda, "SDA");
 }
 
 void verify_scl_low()
 {
-	verify_low(BIT_SCL, "SCL");
+	verify_low(bit_scl, "SCL");
 }
 
 void verify_scl_high()
 {
-	verify_high(BIT_SCL, "SCL");
+	verify_high(bit_scl, "SCL");
 }
 
 /*
@@ -224,7 +227,7 @@ void set_sda(char value)
 
 	usb_control_msg(handle,
 			USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
-			(value ? PSCMD_ON : PSCMD_OFF), 0, BIT_SDA,
+			(value ? PSCMD_ON : PSCMD_OFF), 0, bit_sda,
 			(char *)buffer, sizeof(buffer), 5000);
 }
 
@@ -235,7 +238,7 @@ void set_scl(char value)
 
 	usb_control_msg(handle,
 			USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
-			(value ? PSCMD_ON : PSCMD_OFF), 0, BIT_SCL,
+			(value ? PSCMD_ON : PSCMD_OFF), 0, bit_scl,
 			(char *)buffer, sizeof(buffer), 5000);
 }
 
@@ -255,7 +258,7 @@ unsigned char i2c_tx_byte(unsigned char byte)
 		set_scl(1);
 		usleep(100);
 		if (i < 0) {
-			if (get_status() & (1 << BIT_SDA))
+			if (get_status() & (1 << bit_sda))
 				ack = 0;
 			else
 				ack = 1;
@@ -278,7 +281,7 @@ unsigned char i2c_rx_byte(unsigned char send_ack)
 			set_sda(0);
 		set_scl(1);
 		usleep(100);
-		if ((i >= 0) && ( get_status() & (1 << BIT_SDA)))
+		if ((i >= 0) && ( get_status() & (1 << bit_sda)))
 			ret |= (1 << i);
 		if (( i < 0) && send_ack)
 			set_sda(1);

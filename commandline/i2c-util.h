@@ -1,6 +1,3 @@
-#define BIT_SDA 6
-#define BIT_SCL 7
-
 void verify_sda_low();
 void verify_sda_high();
 void verify_scl_low();

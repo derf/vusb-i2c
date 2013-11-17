@@ -10,6 +10,8 @@ int main(int argc, char **argv)
 	signed char i;
 	short int number;
 
+	char bit_sda = 6;
+
 	i2c_init();
 	i2c_start();
 	puts("ready");
@@ -33,13 +35,13 @@ int main(int argc, char **argv)
 					usleep(10);
 					//verify_scl_high();
 					if (i < 0) {
-						if (get_status() & (1 << BIT_SDA))
+						if (get_status() & (1 << bit_sda))
 							puts("> NAK");
 						else
 							puts("> ACK");
 					}
 					else if (number == 256) {
-						if (get_status() & (1 << BIT_SDA))
+						if (get_status() & (1 << bit_sda))
 							puts("1");
 						else
 							puts("0");
