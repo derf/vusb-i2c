@@ -7116,15 +7116,13 @@ Low profile connectors, straight&lt;p&gt;
 </segment>
 <segment>
 <pinref part="GND1" gate="1" pin="GND"/>
-<wire x1="99.06" y1="139.7" x2="91.44" y2="139.7" width="0.1524" layer="91"/>
-<wire x1="91.44" y1="139.7" x2="91.44" y2="121.92" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="165.1" x2="91.44" y2="139.7" width="0.1524" layer="91"/>
 <pinref part="SV2" gate="1" pin="6"/>
-<wire x1="63.5" y1="165.1" x2="99.06" y2="165.1" width="0.1524" layer="91"/>
-<wire x1="99.06" y1="165.1" x2="99.06" y2="139.7" width="0.1524" layer="91"/>
-<pinref part="JP2" gate="A" pin="2"/>
-<wire x1="116.84" y1="137.16" x2="99.06" y2="137.16" width="0.1524" layer="91"/>
-<wire x1="99.06" y1="137.16" x2="99.06" y2="139.7" width="0.1524" layer="91"/>
-<junction x="99.06" y="139.7"/>
+<wire x1="91.44" y1="139.7" x2="91.44" y2="121.92" width="0.1524" layer="91"/>
+<wire x1="63.5" y1="165.1" x2="91.44" y2="165.1" width="0.1524" layer="91"/>
+<pinref part="JP2" gate="A" pin="1"/>
+<wire x1="116.84" y1="139.7" x2="91.44" y2="139.7" width="0.1524" layer="91"/>
+<junction x="91.44" y="139.7"/>
 </segment>
 </net>
 <net name="N$37" class="0">
@@ -7230,9 +7228,7 @@ Low profile connectors, straight&lt;p&gt;
 <pinref part="R15" gate="G$1" pin="2"/>
 <wire x1="38.1" y1="88.9" x2="38.1" y2="119.38" width="0.1524" layer="91"/>
 <junction x="38.1" y="119.38"/>
-<wire x1="116.84" y1="134.62" x2="96.52" y2="134.62" width="0.1524" layer="91"/>
-<wire x1="96.52" y1="134.62" x2="96.52" y2="157.48" width="0.1524" layer="91"/>
-<wire x1="96.52" y1="157.48" x2="86.36" y2="157.48" width="0.1524" layer="91"/>
+<wire x1="104.14" y1="157.48" x2="86.36" y2="157.48" width="0.1524" layer="91"/>
 <junction x="35.56" y="157.48"/>
 <pinref part="R1" gate="G$1" pin="2"/>
 <wire x1="86.36" y1="157.48" x2="78.74" y2="157.48" width="0.1524" layer="91"/>
@@ -7245,7 +7241,9 @@ Low profile connectors, straight&lt;p&gt;
 <pinref part="SV2" gate="1" pin="2"/>
 <wire x1="63.5" y1="170.18" x2="78.74" y2="170.18" width="0.1524" layer="91"/>
 <wire x1="78.74" y1="170.18" x2="78.74" y2="157.48" width="0.1524" layer="91"/>
-<pinref part="JP2" gate="A" pin="3"/>
+<pinref part="JP2" gate="A" pin="4"/>
+<wire x1="116.84" y1="132.08" x2="104.14" y2="132.08" width="0.1524" layer="91"/>
+<wire x1="104.14" y1="132.08" x2="104.14" y2="157.48" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="SCL" class="0">
@@ -7261,20 +7259,15 @@ Low profile connectors, straight&lt;p&gt;
 <wire x1="45.72" y1="167.64" x2="45.72" y2="142.24" width="0.1524" layer="91"/>
 <wire x1="45.72" y1="142.24" x2="78.74" y2="142.24" width="0.1524" layer="91"/>
 <junction x="78.74" y="142.24"/>
-<pinref part="JP2" gate="A" pin="1"/>
-<wire x1="116.84" y1="139.7" x2="101.6" y2="139.7" width="0.1524" layer="91"/>
-<wire x1="101.6" y1="139.7" x2="101.6" y2="132.08" width="0.1524" layer="91"/>
-<wire x1="101.6" y1="132.08" x2="93.98" y2="132.08" width="0.1524" layer="91"/>
-<wire x1="93.98" y1="132.08" x2="93.98" y2="137.16" width="0.1524" layer="91"/>
-<wire x1="93.98" y1="137.16" x2="78.74" y2="137.16" width="0.1524" layer="91"/>
 <junction x="78.74" y="137.16"/>
+<pinref part="JP2" gate="A" pin="2"/>
+<wire x1="116.84" y1="137.16" x2="78.74" y2="137.16" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="SDA" class="0">
 <segment>
 <pinref part="IC1" gate="G$1" pin="(MISO)PB6"/>
 <wire x1="76.2" y1="134.62" x2="86.36" y2="134.62" width="0.1524" layer="91"/>
-<wire x1="86.36" y1="134.62" x2="86.36" y2="129.54" width="0.1524" layer="91"/>
 <pinref part="R2" gate="G$1" pin="1"/>
 <wire x1="86.36" y1="134.62" x2="86.36" y2="144.78" width="0.1524" layer="91"/>
 <junction x="86.36" y="134.62"/>
@@ -7284,10 +7277,8 @@ Low profile connectors, straight&lt;p&gt;
 <wire x1="43.18" y1="170.18" x2="43.18" y2="144.78" width="0.1524" layer="91"/>
 <wire x1="43.18" y1="144.78" x2="86.36" y2="144.78" width="0.1524" layer="91"/>
 <junction x="86.36" y="144.78"/>
-<wire x1="86.36" y1="129.54" x2="111.76" y2="129.54" width="0.1524" layer="91"/>
-<wire x1="111.76" y1="129.54" x2="111.76" y2="132.08" width="0.1524" layer="91"/>
-<pinref part="JP2" gate="A" pin="4"/>
-<wire x1="111.76" y1="132.08" x2="116.84" y2="132.08" width="0.1524" layer="91"/>
+<pinref part="JP2" gate="A" pin="3"/>
+<wire x1="116.84" y1="134.62" x2="86.36" y2="134.62" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$4" class="0">
