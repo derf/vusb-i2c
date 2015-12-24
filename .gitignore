@@ -2,3 +2,5 @@
 /firmware/*.hex
 /firmware/*.bin
 *.o
+*.s#*
+*.b#*
