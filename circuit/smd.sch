@@ -7069,28 +7069,12 @@ diameter 3 mm, horizontal, grid 12.7 mm</description>
 <hole x="7.9" y="2.15" drill="1"/>
 </package>
 <package name="USB-PLUG-A-THT-2S">
-<wire x1="-10" y1="-6.1" x2="4.9" y2="-6.1" width="0.2032" layer="21"/>
-<wire x1="4.9" y1="-6.1" x2="6.4" y2="-6.1" width="0.2032" layer="21"/>
 <wire x1="6.4" y1="-6.1" x2="8.9" y2="-6.1" width="0.2032" layer="51"/>
 <wire x1="8.9" y1="-6.1" x2="8.9" y2="-5" width="0.2032" layer="51"/>
 <wire x1="8.9" y1="-5" x2="8.9" y2="4.6" width="0.2032" layer="21"/>
 <wire x1="8.9" y1="4.6" x2="8.9" y2="4.7" width="0.2032" layer="21"/>
 <wire x1="8.9" y1="4.7" x2="8.9" y2="5.9" width="0.2032" layer="51"/>
 <wire x1="8.9" y1="5.9" x2="6.4" y2="5.9" width="0.2032" layer="51"/>
-<wire x1="6.4" y1="5.9" x2="6.3" y2="5.9" width="0.2032" layer="21"/>
-<wire x1="6.3" y1="5.9" x2="6.2" y2="5.9" width="0.2032" layer="21"/>
-<wire x1="6.2" y1="5.9" x2="4.9" y2="5.9" width="0.2032" layer="21"/>
-<wire x1="4.9" y1="5.9" x2="-10" y2="5.9" width="0.2032" layer="21"/>
-<wire x1="-10" y1="5.9" x2="-10" y2="-6.1" width="0.2032" layer="21"/>
-<wire x1="-4.9" y1="-4.3" x2="-4.9" y2="-1.8" width="0.2032" layer="21"/>
-<wire x1="-4.9" y1="-1.8" x2="-2.9" y2="-1.8" width="0.2032" layer="21"/>
-<wire x1="-2.9" y1="-1.8" x2="-2.9" y2="-4.3" width="0.2032" layer="21"/>
-<wire x1="-2.9" y1="-4.3" x2="-4.9" y2="-4.3" width="0.2032" layer="21"/>
-<wire x1="-4.9" y1="1.6" x2="-4.9" y2="4.1" width="0.2032" layer="21"/>
-<wire x1="-4.9" y1="4.1" x2="-2.9" y2="4.1" width="0.2032" layer="21"/>
-<wire x1="-2.9" y1="4.1" x2="-2.9" y2="1.6" width="0.2032" layer="21"/>
-<wire x1="-2.9" y1="1.6" x2="-4.9" y2="1.6" width="0.2032" layer="21"/>
-<wire x1="4.9" y1="5.9" x2="4.9" y2="-6.1" width="0.2032" layer="21"/>
 <wire x1="10" y1="3.4" x2="9" y2="3.4" width="0.4064" layer="51"/>
 <wire x1="10" y1="0.9" x2="9" y2="0.9" width="0.4064" layer="51"/>
 <wire x1="10" y1="-1.1" x2="9" y2="-1.1" width="0.4064" layer="51"/>
@@ -7103,7 +7087,6 @@ diameter 3 mm, horizontal, grid 12.7 mm</description>
 <pad name="1" x="10" y="-3.6" drill="0.8"/>
 <text x="9.5" y="4.5" size="1.27" layer="21">&gt;NAME</text>
 <text x="9.5" y="-6" size="1.27" layer="21">&gt;VALUE</text>
-<rectangle x1="-10" y1="-6.1" x2="8.9" y2="5.9" layer="39"/>
 <rectangle x1="8.9" y1="-4.2" x2="10.6" y2="4" layer="39"/>
 <hole x="7.9" y="-2.35" drill="1"/>
 <hole x="7.9" y="2.15" drill="1"/>
@@ -8745,9 +8728,9 @@ Source: www.kingbright.com</description>
 <part name="GND3" library="supply1" deviceset="GND" device=""/>
 <part name="FRAME1" library="frames" deviceset="A5L-LOC" device="" value="vusb-i2c"/>
 <part name="X1" library="_con-usb_1" deviceset="USB-1X-2S" device="-PLUG-A-THT" value="USB-1X-2S-PLUG-A-THT"/>
-<part name="LED1" library="led" deviceset="LED" device="SML0805"/>
-<part name="LED2" library="led" deviceset="LED" device="SML0805"/>
-<part name="R7" library="rcl" deviceset="R-EU_" device="R0805"/>
+<part name="LED1" library="led" deviceset="LED" device="SML0805" value="act"/>
+<part name="LED2" library="led" deviceset="LED" device="SML0805" value="pwr"/>
+<part name="R7" library="rcl" deviceset="R-EU_" device="R0805" value="150..1K"/>
 </parts>
 <sheets>
 <sheet>
