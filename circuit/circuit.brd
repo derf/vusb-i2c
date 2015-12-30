@@ -66,8 +66,8 @@
 <text x="19.05" y="19.685" size="1.016" layer="26" rot="MR0">CC-BY</text>
 <text x="19.05" y="20.955" size="1.016" layer="26" rot="MR0">rev 2</text>
 <text x="19.05" y="22.225" size="1.016" layer="26" rot="MR0">vusb-i2c</text>
-<text x="5.715" y="23.495" size="1.016" layer="25">D-</text>
-<text x="5.715" y="20.955" size="1.016" layer="25">D+</text>
+<text x="1.27" y="24.765" size="0.8128" layer="25">D-</text>
+<text x="1.27" y="22.225" size="0.8128" layer="25">D+</text>
 <text x="34.29" y="23.495" size="1.016" layer="25">SDA</text>
 <text x="34.29" y="20.955" size="1.016" layer="25">SCL</text>
 <text x="34.925" y="26.035" size="1.016" layer="25">5V</text>
@@ -77,8 +77,8 @@
 <text x="1.27" y="20.955" size="0.8128" layer="25">g</text>
 <text x="1.27" y="18.415" size="0.8128" layer="25">b</text>
 <text x="19.05" y="18.415" size="1.27" layer="26" rot="MR0">by derf</text>
-<text x="10.16" y="5.08" size="1.016" layer="25" rot="R270">PWR</text>
-<text x="20.955" y="5.08" size="1.016" layer="25" rot="R270">ACT</text>
+<text x="12.7" y="0.635" size="1.016" layer="25">PWR</text>
+<text x="17.145" y="0.635" size="1.016" layer="25">ACT</text>
 </plain>
 <libraries>
 <library name="atmel">
