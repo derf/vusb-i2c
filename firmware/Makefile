@@ -5,36 +5,40 @@
 # Tabsize: 4
 # Copyright: (c) 2005 by OBJECTIVE DEVELOPMENT Software GmbH
 # License: GNU GPL v2 (see License.txt) or proprietary (CommercialLicense.txt)
-# This Revision: $Id$
+#
+# Edited by Daniel Friesel
 
-DEVICE = attiny2313
-AVRDUDE = avrdude -c usbasp -p $(DEVICE)
-# Choose your favorite programmer and interface above.
+MCU ?= attiny2313
+AVRDUDE_PROGRAMMER ?= usbasp
 
-COMPILE = avr-gcc -Wall -Os -Iusbdrv -I. -mmcu=$(DEVICE) -DF_CPU=16000000 #-DDEBUG_LEVEL=2
-# NEVER compile the final product with debugging! Any debug output will
-# distort timing so that the specs can't be met.
+AVRCC ?= avr-gcc
+AVRFLASH ?= avrdude
+AVRNM ?= avr-nm
+AVROBJCOPY ?= avr-objcopy
+AVROBJDUMP ?= avr-objdump
+
+CFLAGS += -mmcu=attiny2313 -DF_CPU=16000000
+CFLAGS += -Wall -Os -Iusbdrv -I.
 
 OBJECTS = usbdrv/usbdrv.o usbdrv/usbdrvasm.o usbdrv/oddebug.o main.o
 
-# symbolic targets:
-all:	main.hex
+all: main.hex
 
 .c.o:
-	$(COMPILE) -c $< -o $@
+	${AVRCC} ${CFLAGS} -c $< -o $@
 
 .S.o:
-	$(COMPILE) -x assembler-with-cpp -c $< -o $@
+	${AVRCC} ${CFLAGS} -x assembler-with-cpp -c $< -o $@
 # "-x assembler-with-cpp" should not be necessary since this is the default
 # file type for the .S (with capital S) extension. However, upper case
 # characters are not always preserved on Windows. To ensure WinAVR
 # compatibility define the file type manually.
 
 .c.s:
-	$(COMPILE) -S $< -o $@
+	${AVRCC} ${CFLAGS} -S $< -o $@
 
-flash:	all
-	$(AVRDUDE) -U flash:w:main.hex:i
+program:	all fuse_tiny2313
+	${AVRFLASH} -p ${MCU} -c ${AVRDUDE_PROGRAMMER} -U flash:w:main.hex:i
 
 
 # Fuse low byte:
@@ -55,25 +59,27 @@ flash:	all
 #        | +------------------ EESAVE (preserve EEPROM on Chip Erase -> not preserved)
 #        +-------------------- DWEN (debug wire enable)
 fuse_tiny2313:	# only needed for attiny2313
-	$(AVRDUDE) -U hfuse:w:0xdb:m -U lfuse:w:0xef:m
+	${AVRFLASH} -p ${MCU} -c ${AVRDUDE_PROGRAMMER} -U hfuse:w:0xdb:m -U lfuse:w:0xef:m
 
 
 clean:
 	rm -f main.hex main.lst main.obj main.cof main.list main.map main.eep.hex main.bin *.o usbdrv/*.o main.s usbdrv/oddebug.s usbdrv/usbdrv.s
 
 # file targets:
-main.bin:	$(OBJECTS)
-	$(COMPILE) -o main.bin $(OBJECTS)
+main.bin: ${OBJECTS}
+	${AVRCC} ${CFLAGS} -o main.bin $(OBJECTS)
 
 main.hex:	main.bin
 	rm -f main.hex main.eep.hex
-	avr-objcopy -j .text -j .data -O ihex main.bin main.hex
+	${AVROBJCOPY} -j .text -j .data -O ihex main.bin main.hex
 	./checksize main.bin
 # do the checksize script as our last action to allow successful compilation
 # on Windows with WinAVR where the Unix commands will fail.
 
-disasm:	main.bin
-	avr-objdump -d main.bin
+disasm: main.bin
+	${AVROBJDUMP} -d main.bin
 
 cpp:
-	$(COMPILE) -E main.c
+	${AVRCC} ${CFLAGS} -E main.c
+
+.PHONY: all program fuse_tiny2313 clean disasm cpp
