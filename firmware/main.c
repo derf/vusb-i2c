@@ -31,80 +31,24 @@ Application examples:
 
 #ifndef TEST_DRIVER_SIZE    /* define this to check out size of pure driver */
 
-static uchar    actionTimers[8];
-static uchar    permstatus = 255;
-
-/* This is the AT90S2313 version of the routine. Change for others. */
-static void outputByte(uchar b)
-{
-	DDRB  = ~b;
-}
-
-static uchar    computeTemporaryChanges(void)
-{
-	return 0;
-}
-
-static void computeOutputStatus(void)
-{
-    outputByte(permstatus);
-}
-
-/* We poll for the timer interrupt instead of declaring an interrupt handler
- * with global interrupts enabled. This saves recursion depth. Our timer does
- * not need high precision and does not run at a high rate anyway.
- */
-static void timerInterrupt(void)
-{
-static uchar    prescaler;
-uchar           i;
-
-    if(!prescaler--){
-        prescaler = 8;  /* rate = 12M / 1024 * 256 * 9 */
-        for(i=0;i<8;i++){
-            if(actionTimers[i])
-                actionTimers[i]--;
-        }
-        computeOutputStatus();
-    }
-}
-
 USB_PUBLIC uchar usbFunctionSetup(uchar data[8])
 {
 usbRequest_t    *rq = (void *)data;
-uchar           status = permstatus;
 static uchar    replyBuf[2];
 
     usbMsgPtr = replyBuf;
-    if(rq->bRequest == 0){  /* ECHO */
+    if(rq->bRequest == 0) {  /* ECHO */
         replyBuf[0] = rq->wValue.bytes[0];
         replyBuf[1] = rq->wValue.bytes[1];
         return 2;
     }
-    if(rq->bRequest == 1){  /* GET_STATUS -> result = 2 bytes */
+    if(rq->bRequest == 1) {  /* GET_STATUS -> result = 1 bytes */
         replyBuf[0] = PINB;
-        replyBuf[1] = computeTemporaryChanges();
-        return 2;
+        return 1;
     }
-    if(rq->bRequest == 2 || rq->bRequest == 3){ /* SWITCH_ON or SWITCH_OFF, index = bit number */
-        uchar bit = rq->wIndex.bytes[0] & 7;
-        uchar mask = 1 << bit;
-        uchar needChange, isOn = status & mask;
-        if(rq->bRequest == 2){  /* SWITCH_ON */
-            status |= mask;
-            needChange = !isOn;
-        }else{              /* SWITCH_OFF */
-            status &= ~mask;
-            needChange = isOn;
-        }
-        if(rq->wValue.bytes[0] == 0){   /* duration == 0 -> permanent switch */
-            actionTimers[bit] = 0;
-            permstatus = status;
-        }else if(needChange){   /* temporary switch: value = duration in 200ms units */
-            actionTimers[bit] = rq->wValue.bytes[0];
-        }
+    if(rq->bRequest == 2) { /* SET_STATUS. Payload byte is output. */
+        DDRB = ~(rq->wIndex.bytes[0]);
     }
-    computeOutputStatus();
     return 0;
 }
 
@@ -131,7 +75,6 @@ uchar   i;
  * that it should re-enumerate the device. Otherwise the host's and device's
  * concept of the device-ID would be out of sync.
  */
-    computeOutputStatus();  /* set output status before we do the delay */
     usbDeviceDisconnect();  /* enforce re-enumeration, do this while interrupts are disabled! */
     i = 0;
     while(--i){         /* fake USB disconnect for > 500 ms */
@@ -147,7 +90,10 @@ uchar   i;
         usbPoll();
         if(TIFR & (1 << TOV0)){
             TIFR |= 1 << TOV0;  /* clear pending flag */
-            timerInterrupt();
+            /*
+             * a periodic (low-frequency, low-accuracy) loop function can
+             * be placed here.
+             */
         }
     }
     return 0;

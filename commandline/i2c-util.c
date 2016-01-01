@@ -32,12 +32,14 @@ obtained from http://libusb.sourceforge.net/.
 
 #define PSCMD_ECHO  0
 #define PSCMD_GET   1
-#define PSCMD_ON    2
-#define PSCMD_OFF   3
+#define PSCMD_SET    2
 /* These are the vendor specific SETUP commands implemented by our USB device */
 
-char bit_sda = 6;
-char bit_scl = 7;
+unsigned char bit_sda = 6;
+unsigned char bit_scl = 7;
+
+unsigned char val_sda = 1;
+unsigned char val_scl = 1;
 
 usb_dev_handle *handle = NULL;
 
@@ -179,8 +181,8 @@ unsigned char get_status()
 				     USB_ENDPOINT_IN, PSCMD_GET, 0, 0, (char *)buffer,
 				     sizeof(buffer), 5000);
 
-	if (nBytes < 2) {
-		fprintf(stderr, "ERR: read status: got %d bytes, expected 2\n",
+	if (nBytes < 1) {
+		fprintf(stderr, "ERR: read status: got %d bytes, expected 1\n",
 				nBytes);
 		exit(1);
 	}
@@ -240,9 +242,11 @@ void set_sda(char value)
 	// discarded
 	unsigned char buffer[8];
 
+	val_sda = value;
+
 	usb_control_msg(handle,
 			USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
-			(value ? PSCMD_ON : PSCMD_OFF), 0, bit_sda,
+			PSCMD_SET, 0, (val_sda << bit_sda) | (val_scl << bit_scl),
 			(char *)buffer, sizeof(buffer), 5000);
 }
 
@@ -251,9 +255,11 @@ void set_scl(char value)
 	// discarded
 	unsigned char buffer[8];
 
+	val_scl = value;
+
 	usb_control_msg(handle,
 			USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
-			(value ? PSCMD_ON : PSCMD_OFF), 0, bit_scl,
+			PSCMD_SET, 0, (val_sda << bit_sda) | (val_scl << bit_scl),
 			(char *)buffer, sizeof(buffer), 5000);
 }
 
@@ -333,10 +339,10 @@ void i2c_init()
 {
 	usb_init();
 	if (usbOpenDevice
-	    (&handle, USBDEV_SHARED_VENDOR, "www.obdev.at",
-	     USBDEV_SHARED_PRODUCT, "PowerSwitch") != 0) {
+	    (&handle, USBDEV_SHARED_VENDOR, "finalrewind.org",
+	     USBDEV_SHARED_PRODUCT, "VUSB-I2C") != 0) {
 		fprintf(stderr,
-			"Could not find USB device \"PowerSwitch\" with vid=0x%x pid=0x%x\n",
+			"Could not find USB device \"VUSB-I2C\" with vid=0x%x pid=0x%x\n",
 			USBDEV_SHARED_VENDOR, USBDEV_SHARED_PRODUCT);
 		exit(1);
 	}
