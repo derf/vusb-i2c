@@ -84,16 +84,17 @@ uchar   i;
     usbDeviceConnect();
     TCCR0 = 5;          /* set prescaler to 1/1024 */
     usbInit();
+    PORTD = _BV(0); /* turn on power LED */
     sei();
     for(;;){    /* main event loop */
         wdt_reset();
         usbPoll();
         if(TIFR & (1 << TOV0)){
             TIFR |= 1 << TOV0;  /* clear pending flag */
-            /*
-             * a periodic (low-frequency, low-accuracy) loop function can
-             * be placed here.
-             */
+            if (PINB & _BV(PB7))
+                PORTD = _BV(0); /* SCL high : turn on power LED */
+            else
+                PORTD = _BV(1); /* SCL low (busy) : turn on activity LED */
         }
     }
     return 0;
