@@ -23,6 +23,7 @@ obtained from http://libusb.sourceforge.net/.
 #include <usb.h>		/* this is libusb, see http://libusb.sourceforge.net/ */
 
 #include "i2c-util.h"
+#include "../global_config.h"
 
 #define USBDEV_SHARED_VENDOR    0x16C0	/* VOTI */
 #define USBDEV_SHARED_PRODUCT   0x05DC	/* Obdev's free shared PID */
@@ -81,12 +82,14 @@ static int usbGetStringAscii(usb_dev_handle * dev, int index, int langid, char
 #define USB_ERROR_IO        3
 
 static int usbOpenDevice(usb_dev_handle ** device, int vendor, char *vendorName,
-			 int product, char *productName)
+			 int product, char *productName, int upperversion,
+			 int lowerversion)
 {
 	struct usb_bus *bus;
 	struct usb_device *dev;
 	usb_dev_handle *handle = NULL;
 	int errorCode = USB_ERROR_NOTFOUND;
+	int major, minor;
 	static int didUsbInit = 0;
 
 	if (!didUsbInit) {
@@ -154,6 +157,25 @@ static int usbOpenDevice(usb_dev_handle ** device, int vendor, char *vendorName,
 	if (handle != NULL) {
 		errorCode = 0;
 		*device = handle;
+
+		minor = dev->descriptor.bcdDevice & 0xff;
+		major = dev->descriptor.bcdDevice >> 8;
+
+		if (major != USBDEV_VERSION_MAJOR) {
+			fprintf(stderr,
+					"Error: Firmware and host software version are not compatible\n"
+					"Firmware: %2d.%02d\n    Host: %2d.%02d\n"
+					"Please upgrade the firmware or downgrade the CLI\n",
+					major, minor, USBDEV_VERSION_MAJOR, USBDEV_VERSION_MINOR);
+			errorCode = -1;
+		}
+		else if (minor != USBDEV_VERSION_MINOR) {
+			fprintf(stderr,
+					"Note: Firmware and host software version may be incompatible\n"
+					"Firmware: %2d.%02d\n    Host: %2d.%02d\n"
+					"Please upgrade the firmware or downgrade the CLI\n",
+					major, minor, USBDEV_VERSION_MAJOR, USBDEV_VERSION_MINOR);
+		}
 	}
 	return errorCode;
 }
@@ -340,10 +362,12 @@ void i2c_init()
 	usb_init();
 	if (usbOpenDevice
 	    (&handle, USBDEV_SHARED_VENDOR, "finalrewind.org",
-	     USBDEV_SHARED_PRODUCT, "VUSB-I2C") != 0) {
+	     USBDEV_SHARED_PRODUCT, "VUSB-I2C", 0, 1) != 0) {
 		fprintf(stderr,
-			"Could not find USB device \"VUSB-I2C\" with vid=0x%x pid=0x%x\n",
-			USBDEV_SHARED_VENDOR, USBDEV_SHARED_PRODUCT);
+			"Could not find USB device \"VUSB-I2C\" with vid=0x%x pid=0x%x"
+			" version~%d.%02d\n",
+			USBDEV_SHARED_VENDOR, USBDEV_SHARED_PRODUCT,
+			USBDEV_VERSION_MAJOR, USBDEV_VERSION_MINOR);
 		exit(1);
 	}
 }

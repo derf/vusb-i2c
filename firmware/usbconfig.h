@@ -11,6 +11,8 @@
 #ifndef __usbconfig_h_included__
 #define __usbconfig_h_included__
 
+#include "../global_config.h"
+
 /*
 General Description:
 This file contains parts of the USB driver which can be configured and can or
@@ -138,7 +140,7 @@ the newest features and options.
  * you use obdev's free shared VID/PID pair. Be sure to read the rules in
  * USBID-License.txt!
  */
-#define USB_CFG_DEVICE_VERSION  0x00, 0x01
+#define USB_CFG_DEVICE_VERSION  USBDEV_VERSION_MINOR, USBDEV_VERSION_MAJOR
 /* Version number of the device: Minor number first, then major number.
  */
 #define USB_CFG_VENDOR_NAME     'f', 'i', 'n', 'a', 'l', 'r', 'e', 'w', 'i', 'n', 'd', '.', 'o', 'r', 'g'
