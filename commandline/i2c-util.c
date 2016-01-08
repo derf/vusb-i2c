@@ -31,11 +31,6 @@ obtained from http://libusb.sourceforge.net/.
  * in firmware/usbdrv/USBID-License.txt.
  */
 
-#define PSCMD_ECHO  0
-#define PSCMD_GET   1
-#define PSCMD_SET    2
-/* These are the vendor specific SETUP commands implemented by our USB device */
-
 unsigned char bit_sda = 6;
 unsigned char bit_scl = 7;
 
@@ -200,7 +195,7 @@ unsigned char get_status()
 	unsigned char buffer[8];
 	int nBytes = usb_control_msg(handle,
 				     USB_TYPE_VENDOR | USB_RECIP_DEVICE |
-				     USB_ENDPOINT_IN, PSCMD_GET, 0, 0, (char *)buffer,
+				     USB_ENDPOINT_IN, USBCMD_GETPORT, 0, 0, (char *)buffer,
 				     sizeof(buffer), 5000);
 
 	if (nBytes < 1) {
@@ -268,7 +263,7 @@ void set_sda(char value)
 
 	usb_control_msg(handle,
 			USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
-			PSCMD_SET, 0, (val_sda << bit_sda) | (val_scl << bit_scl),
+			USBCMD_SETPORT, 0, (val_sda << bit_sda) | (val_scl << bit_scl),
 			(char *)buffer, sizeof(buffer), 5000);
 }
 
@@ -281,7 +276,7 @@ void set_scl(char value)
 
 	usb_control_msg(handle,
 			USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
-			PSCMD_SET, 0, (val_sda << bit_sda) | (val_scl << bit_scl),
+			USBCMD_SETPORT, 0, (val_sda << bit_sda) | (val_scl << bit_scl),
 			(char *)buffer, sizeof(buffer), 5000);
 }
 

@@ -37,16 +37,16 @@ usbRequest_t    *rq = (void *)data;
 static uchar    replyBuf[2];
 
     usbMsgPtr = replyBuf;
-    if(rq->bRequest == 0) {  /* ECHO */
+    if(rq->bRequest == USBCMD_ECHO) {  /* ECHO */
         replyBuf[0] = rq->wValue.bytes[0];
         replyBuf[1] = rq->wValue.bytes[1];
         return 2;
     }
-    if(rq->bRequest == 1) {  /* GET_STATUS -> result = 1 bytes */
+    if(rq->bRequest == USBCMD_GETPORT) {  /* GET_STATUS -> result = 1 bytes */
         replyBuf[0] = PINB;
         return 1;
     }
-    if(rq->bRequest == 2) { /* SET_STATUS. Payload byte is output. */
+    if(rq->bRequest == USBCMD_SETPORT) { /* SET_STATUS. Payload byte is output. */
         DDRB = ~(rq->wIndex.bytes[0]);
     }
     return 0;
