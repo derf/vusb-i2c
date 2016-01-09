@@ -24,11 +24,11 @@ int main(int argc, char **argv)
 	}
 
 	i2c_init();
-	i2c_start();
+	i2c_hw_start();
 
-	if (!i2c_tx_byte(address << 1)) {
+	if (!i2c_hw_tx_byte(address << 1)) {
 		fprintf(stderr, "Received NAK from slave 0x%02x, aborting\n", address);
-		i2c_stop();
+		i2c_hw_stop();
 		i2c_deinit();
 		return 3;
 	}
@@ -37,19 +37,19 @@ int main(int argc, char **argv)
 		cmdbuf = strtol(argv[i], &conv_err, 0);
 		if (conv_err && *conv_err) {
 			fprintf(stderr, "write command: conversion error at '%s'\n", conv_err);
-			i2c_stop();
+			i2c_hw_stop();
 			i2c_deinit();
 			return 2;
 		}
-		if (!i2c_tx_byte(cmdbuf)) {
+		if (!i2c_hw_tx_byte(cmdbuf)) {
 			fprintf(stderr, "Received NAK after byte %d (0x%02x)\n", i-1, cmdbuf);
-			i2c_stop();
+			i2c_hw_stop();
 			i2c_deinit();
 			return 4;
 		}
 	}
 
-	i2c_stop();
+	i2c_hw_stop();
 	i2c_deinit();
 
 	return 0;

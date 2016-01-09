@@ -308,6 +308,24 @@ unsigned char i2c_tx_byte(unsigned char byte)
 	return ack;
 }
 
+unsigned char i2c_hw_tx_byte(unsigned char byte)
+{
+	unsigned char buffer[8];
+
+	int nBytes = usb_control_msg(handle,
+			USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
+			USBCMD_TX, 0, byte,
+			(char *)buffer, sizeof(buffer), 5000);
+
+	if (nBytes < 1) {
+		fprintf(stderr, "ERR: tx: got %d bytes, expected 1\n",
+				nBytes);
+		exit(1);
+	}
+
+	return buffer[0];
+}
+
 unsigned char i2c_rx_byte(unsigned char send_ack)
 {
 	signed char i;
@@ -330,6 +348,24 @@ unsigned char i2c_rx_byte(unsigned char send_ack)
 	return ret;
 }
 
+unsigned char i2c_hw_rx_byte(unsigned char send_ack)
+{
+	unsigned char buffer[8];
+
+	int nBytes = usb_control_msg(handle,
+			USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
+			USBCMD_RX, 0, send_ack,
+			(char *)buffer, sizeof(buffer), 5000);
+
+	if (nBytes < 1) {
+		fprintf(stderr, "ERR: tx: got %d bytes, expected 1\n",
+				nBytes);
+		exit(1);
+	}
+
+	return buffer[0];
+}
+
 void i2c_start()
 {
 	set_sda(1);
@@ -342,6 +378,17 @@ void i2c_start()
 	verify_scl_low();
 }
 
+void i2c_hw_start()
+{
+	// discarded
+	unsigned char buffer[8];
+
+	usb_control_msg(handle,
+			USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
+			USBCMD_START, 0, 0,
+			(char *)buffer, sizeof(buffer), 5000);
+}
+
 void i2c_stop()
 {
 	set_scl(1);
@@ -350,6 +397,17 @@ void i2c_stop()
 	set_sda(1);
 	usleep(100);
 	verify_sda_high();
+}
+
+void i2c_hw_stop()
+{
+	// discarded
+	unsigned char buffer[8];
+
+	usb_control_msg(handle,
+			USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
+			USBCMD_STOP, 0, 0,
+			(char *)buffer, sizeof(buffer), 5000);
 }
 
 void i2c_init()
@@ -365,6 +423,18 @@ void i2c_init()
 			USBDEV_VERSION_MAJOR, USBDEV_VERSION_MINOR);
 		exit(1);
 	}
+	i2c_hw_setbits();
+}
+
+void i2c_hw_setbits()
+{
+	// discarded
+	unsigned char buffer[8];
+
+	usb_control_msg(handle,
+			USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_ENDPOINT_IN,
+			USBCMD_SETBITS, 0, ((1 << bit_scl) << 8) | (1 << bit_sda),
+			(char *)buffer, sizeof(buffer), 5000);
 }
 
 void i2c_deinit()

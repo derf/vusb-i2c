@@ -33,23 +33,90 @@ Application examples:
 
 USB_PUBLIC uchar usbFunctionSetup(uchar data[8])
 {
-usbRequest_t    *rq = (void *)data;
-static uchar    replyBuf[2];
+	usbRequest_t    *rq = (void *)data;
+	static uchar    replyBuf[2];
+	static uchar    bv_sda, bv_scl, i, buf;
 
-    usbMsgPtr = replyBuf;
-    if(rq->bRequest == USBCMD_ECHO) {  /* ECHO */
-        replyBuf[0] = rq->wValue.bytes[0];
-        replyBuf[1] = rq->wValue.bytes[1];
-        return 2;
-    }
-    if(rq->bRequest == USBCMD_GETPORT) {  /* GET_STATUS -> result = 1 bytes */
-        replyBuf[0] = PINB;
-        return 1;
-    }
-    if(rq->bRequest == USBCMD_SETPORT) { /* SET_STATUS. Payload byte is output. */
-        DDRB = ~(rq->wIndex.bytes[0]);
-    }
-    return 0;
+	usbMsgPtr = replyBuf;
+	if (rq->bRequest == USBCMD_ECHO) {
+		replyBuf[0] = rq->wValue.bytes[0];
+		replyBuf[1] = rq->wValue.bytes[1];
+		return 2;
+	}
+	if (rq->bRequest == USBCMD_GETPORT) {
+		replyBuf[0] = PINB;
+		return 1;
+	}
+	if (rq->bRequest == USBCMD_SETPORT) {
+		DDRB = ~(rq->wIndex.bytes[0]);
+		return 0;
+	}
+	if (rq->bRequest == USBCMD_SETBITS) {
+		bv_sda = rq->wIndex.bytes[0];
+		bv_scl = rq->wIndex.bytes[1];
+		return 0;
+	}
+	if (rq->bRequest == USBCMD_START) {
+		DDRB &= ~(bv_sda | bv_scl);
+		_delay_us(1000);
+		DDRB |= bv_sda;
+		_delay_us(1000);
+		DDRB |= bv_scl;
+		return 0;
+	}
+	if (rq->bRequest == USBCMD_STOP) {
+		DDRB &= ~bv_scl;
+		_delay_us(100);
+		DDRB &= ~bv_sda;
+		_delay_us(100);
+		return 0;
+	}
+	if (rq->bRequest == USBCMD_TX) {
+		buf = rq->wIndex.bytes[0]; // byte to transmit
+		for (i = 0; i <= 8; i++) {
+			if ((buf & 0x80) || (i == 8)) {
+				DDRB &= ~bv_sda;
+			} else {
+				DDRB |= bv_sda;
+			}
+			buf <<= 1;
+			_delay_us(100);
+			DDRB &= ~bv_scl;
+			_delay_us(100);
+			if (i == 8) {
+				if (PINB & bv_sda) {
+					replyBuf[0] = 0;
+				} else {
+					replyBuf[0] = 1;
+				}
+			}
+			DDRB |= bv_scl;
+			_delay_us(100);
+		}
+		return 1;
+	}
+	if (rq->bRequest == USBCMD_RX) {
+		buf = rq->wIndex.bytes[0]; // true <=> transmit ack
+		DDRB &= ~bv_sda;
+		replyBuf[0] = 0;
+		for (i = 0; i <= 8; i++) {
+			if ((i == 8) && buf) {
+				DDRB |= bv_sda;
+			}
+			DDRB &= ~bv_scl;
+			_delay_us(100);
+			if ((i < 8) && ( PINB & bv_sda)) {
+				replyBuf[0] |= _BV(7-i);
+			}
+			else if ((i == 8) && buf) {
+				DDRB &= ~bv_sda;
+			}
+			DDRB |= bv_scl;
+			_delay_us(100);
+		}
+		return 1;
+	}
+	return 0;
 }
 
 /* allow some inter-device compatibility */

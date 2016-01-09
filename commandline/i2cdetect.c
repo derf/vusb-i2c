@@ -24,9 +24,9 @@ int main(int argc, char **argv)
 		}
 
 
-		i2c_start();
+		i2c_hw_start();
 
-		if (i2c_tx_byte(i2cid))
+		if (i2c_hw_tx_byte(i2cid))
 			printf(" %02x", id);
 		else
 			fputs(" --", stdout);
@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 
 	fputs("\n", stdout);
 
-	i2c_stop();
+	i2c_hw_stop();
 	i2c_deinit();
 	return 0;
 }

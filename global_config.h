@@ -1,6 +1,11 @@
 #define USBDEV_VERSION_MAJOR 0
-#define USBDEV_VERSION_MINOR 1
+#define USBDEV_VERSION_MINOR 2
 
 #define USBCMD_ECHO    0
 #define USBCMD_GETPORT 1
 #define USBCMD_SETPORT 2
+#define USBCMD_SETBITS 3
+#define USBCMD_START   4
+#define USBCMD_STOP    5
+#define USBCMD_TX      6
+#define USBCMD_RX      7
