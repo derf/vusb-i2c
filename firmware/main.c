@@ -136,7 +136,7 @@ int main(void)
 	usbDeviceConnect();
 	TCCR0 = 5;          /* set prescaler to 1/1024 */
 	usbInit();
-	PORTD = _BV(0); /* turn on power LED */
+	PORTD = _BV(1); /* turn on power LED */
 	sei();
 	for(;;){    /* main event loop */
 		wdt_reset();
@@ -144,9 +144,9 @@ int main(void)
 		if (TIFR & (1 << TOV0)){
 			TIFR |= 1 << TOV0;  /* clear pending flag */
 		if (PINB & _BV(PB7))
-			PORTD = _BV(0); /* SCL high : turn on power LED */
+			PORTD = _BV(1); /* SCL high : turn on power LED */
 		else
-			PORTD = _BV(1); /* SCL low (busy) : turn on activity LED */
+			PORTD = _BV(0); /* SCL low (busy) : turn on activity LED */
 		}
 	}
 	return 0;
