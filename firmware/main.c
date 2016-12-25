@@ -50,6 +50,8 @@ USB_PUBLIC uchar usbFunctionSetup(uchar data[8])
 		return 0;
 	}
 	if (rq->bRequest == USBCMD_STOP) {
+		DDRB |= bv_sda;
+		_delay_us(100);
 		DDRB &= ~bv_scl;
 		_delay_us(100);
 		DDRB &= ~bv_sda;
