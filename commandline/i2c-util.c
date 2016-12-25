@@ -1,20 +1,8 @@
-/* Name: powerSwitch.c
- * Project: PowerSwitch based on AVR USB driver
- * Author: Christian Starkjohann
- * Creation Date: 2005-01-16
- * Tabsize: 4
- * Copyright: (c) 2005 by OBJECTIVE DEVELOPMENT Software GmbH
- * License: GNU GPL v2 (see License.txt) or proprietary (CommercialLicense.txt)
- * This Revision: $Id$
- */
-
 /*
-General Description:
-This program controls the PowerSwitch USB device from the command line.
-It must be linked with libusb, a library for accessing the USB bus from
-Linux, FreeBSD, Mac OS X and other Unix operating systems. Libusb can be
-obtained from http://libusb.sourceforge.net/.
-*/
+ * Copyright (c) 2005 by OBJECTIVE DEVELOPMENT Software GmbH
+ *       and (c) 2016 by Daniel Friesel
+ * License: GNU GPL v2
+ */
 
 #include <unistd.h>
 #include <stdio.h>

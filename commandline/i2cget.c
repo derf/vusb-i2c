@@ -7,13 +7,14 @@
 int main(int argc, char **argv)
 {
 	int i, address, cmdbuf;
+	int num_bytes = 1;
 	unsigned int ret;
 	char *conv_err;
 
 	i2c_getopt(argc, argv);
 
-	if (argc < 3) {
-		fputs("Usage: vusb-i2cget <address> <register ...> ", stderr);
+	if (argc < 4) {
+		fputs("Usage: vusb-i2cget <address> <num_bytes> <register ...> ", stderr);
 		return 1;
 	}
 
@@ -21,6 +22,13 @@ int main(int argc, char **argv)
 
 	if (conv_err && *conv_err) {
 		fprintf(stderr, "address: Conversion error at '%s'\n", conv_err);
+		return 2;
+	}
+
+	num_bytes = strtol(argv[2], &conv_err, 0);
+
+	if (conv_err && *conv_err) {
+		fprintf(stderr, "num_bytes: Conversion error at '%s'\n", conv_err);
 		return 2;
 	}
 
@@ -34,7 +42,7 @@ int main(int argc, char **argv)
 		return 3;
 	}
 
-	for (i = 2; i < argc; i++) {
+	for (i = 3; i < argc; i++) {
 		cmdbuf = strtol(argv[i], &conv_err, 0);
 		if (conv_err && *conv_err) {
 			fprintf(stderr, "read command: Conversion error at '%s'\n", conv_err);
@@ -58,12 +66,12 @@ int main(int argc, char **argv)
 		return 3;
 	}
 
-	ret = i2c_hw_rx_byte(0);
+	for (i = 0; i < num_bytes; i++) {
+		printf("%i\n", i2c_hw_rx_byte(1));
+	}
 
 	i2c_hw_stop();
 	i2c_deinit();
-
-	printf("%i\n", ret);
 
 	return 0;
 }
