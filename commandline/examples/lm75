@@ -1,0 +1,49 @@
+#!/bin/zsh
+
+addr=0x4f
+cmd=$1
+arg=$2
+
+function read_temp {
+	typeset buf num
+
+	buf=($(vusb-i2cget $addr 2 $1))
+	num=$buf[1]
+
+	if (( buf[2] > 127 )); then
+		num="${num}.5"
+	fi
+
+	echo $num
+}
+
+function set_temp {
+	typeset buf1 buf2 reg=$1 num=$2
+
+	buf1=${num%.*}
+	if [[ $buf1 == $num ]]; then
+		buf2=0
+	else
+		buf2=128
+	fi
+
+	vusb-i2cset $addr $reg $buf1 $buf2
+}
+
+case $cmd in
+	get_temp)
+		read_temp 0
+		;;
+	get_hyst)
+		read_temp 2
+		;;
+	get_os)
+		read_temp 3
+		;;
+	set_hyst)
+		set_temp 2 $arg
+		;;
+	set_os)
+		set_temp 3 $arg
+		;;
+esac
