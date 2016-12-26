@@ -5,16 +5,11 @@ cmd=$1
 arg=$2
 
 function read_temp {
-	typeset buf num
+	typeset buf
 
 	buf=($(vusb-i2cget $addr 2 $1))
-	num=$buf[1]
 
-	if (( buf[2] > 127 )); then
-		num="${num}.5"
-	fi
-
-	echo $num
+	printf "%.2f\n" $(( buf[1] + (buf[2] / 256.) ))
 }
 
 function set_temp {
