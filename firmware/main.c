@@ -87,19 +87,21 @@ USB_PUBLIC uchar usbFunctionSetup(uchar data[8])
 		DDRB &= ~bv_sda;
 		replyBuf[0] = 0;
 		for (i = 0; i <= 8; i++) {
-			if ((i == 8) && buf) {
-				DDRB |= bv_sda;
-			}
+			_delay_us(20);
 			DDRB &= ~bv_scl;
-			_delay_us(100);
+			_delay_us(20);
 			if ((i < 8) && ( PINB & bv_sda)) {
 				replyBuf[0] |= _BV(7-i);
+			}
+			_delay_us(20);
+			DDRB |= bv_scl;
+			_delay_us(20);
+			if ((i == 7) && buf) {
+				DDRB |= bv_sda;
 			}
 			else if ((i == 8) && buf) {
 				DDRB &= ~bv_sda;
 			}
-			DDRB |= bv_scl;
-			_delay_us(100);
 		}
 		return 1;
 	}
