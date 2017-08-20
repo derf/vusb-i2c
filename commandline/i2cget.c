@@ -66,9 +66,10 @@ int main(int argc, char **argv)
 		return 3;
 	}
 
-	for (i = 0; i < num_bytes; i++) {
-		printf("%i\n", i2c_hw_rx_byte(1));
+	for (i = 1; i <= num_bytes; i++) {
+		printf("%i ", i2c_hw_rx_byte((i < num_bytes) * 1));
 	}
+	putc('\n', stdout);
 
 	i2c_hw_stop();
 	i2c_deinit();
