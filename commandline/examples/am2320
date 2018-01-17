@@ -1,0 +1,58 @@
+#!/bin/zsh
+
+addr=0x5c
+
+
+# Wait for AM2320 to wake up
+# (it automatically goes idle after ~2 seconds without I2C activity)
+while ! vusb-i2cset ${addr} 3 0 4 2> /dev/null; do
+	echo -n .
+done
+
+# Also retry wakeup in case of errors
+while ! data=($(vusb-i2cget 0x5c 8 2> /dev/null)); do
+	echo -n .
+	while ! vusb-i2cset ${addr} 3 0 4 2> /dev/null; do
+		echo -n .
+	done
+done
+
+echo
+
+if (( data[1] != 3 )); then
+	echo "Error: Expected return code 3 (read register), got code $data[1]" >&2
+	exit 1
+fi
+
+if (( data[2] != 4 )); then
+	echo "Error: Expected 4 data bytes, got $data[2]" >&2
+	exit 1
+fi
+
+(( checksum = 0xffff ))
+for i in {1..6}; do
+	(( checksum ^= data[i] ))
+	for j in {1..8}; do
+		if (( checksum & 0x01 )); then
+			(( checksum >>= 1 ))
+			(( checksum ^= 0xa001 ))
+		else
+			(( checksum >>= 1))
+		fi
+	done
+done
+
+if (( (data[7] != (checksum & 0x00ff )) || (data[8] != (checksum >> 8)) )); then
+	echo "checksum Error" >&2
+	exit 1
+fi
+
+if (( data[5] > 127 )); then
+	printf "Temperature: -%.1f°c\n" $(( ( (data[5] & 0x7f) * 256 + data[6] ) / 10. ))
+else
+	printf "Temperature: %.1f°c\n" $(( ( data[5] * 256 + data[6] ) / 10. ))
+fi
+
+printf "Humidity   : %.1f%%\n" $(( (data[3] * 256 + data[4]) / 10. ))
+
+exit 0
