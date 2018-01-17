@@ -13,8 +13,8 @@ int main(int argc, char **argv)
 
 	i2c_getopt(argc, argv);
 
-	if (argc < 4) {
-		fputs("Usage: vusb-i2cget <address> <num_bytes> <register ...> ", stderr);
+	if (argc < 3) {
+		fputs("Usage: vusb-i2cget <address> <num_bytes> [register ...] ", stderr);
 		return 1;
 	}
 
@@ -33,13 +33,16 @@ int main(int argc, char **argv)
 	}
 
 	i2c_init();
-	i2c_hw_start();
 
-	if (!i2c_hw_tx_byte((address << 1) | 0)) {
-		fprintf(stderr, "Received NAK from slave 0x%02x, aborting\n", address);
-		i2c_hw_stop();
-		i2c_deinit();
-		return 3;
+	if (argc >= 3) {
+		i2c_hw_start();
+
+		if (!i2c_hw_tx_byte((address << 1) | 0)) {
+			fprintf(stderr, "Received NAK from slave 0x%02x, aborting\n", address);
+			i2c_hw_stop();
+			i2c_deinit();
+			return 3;
+		}
 	}
 
 	for (i = 3; i < argc; i++) {
