@@ -1,0 +1,37 @@
+#!/bin/sh
+
+WR_CMD=0x80
+WR_DATA=0x40
+
+WIDTH=128
+HEIGHT=64
+
+SET_CONTRAST=0x81
+SET_ENTIRE_ON=0xa4
+SET_NORM_INV=0xa6
+SET_DISP_OFF=0xae
+SET_DISP_ON=0xaf
+SET_MEM_ADDR=0x20
+SET_COL_ADDR=0x21
+SET_PAGE_ADDR=0x22
+SET_DISP_START_LINE=0x40
+SET_SEG_REMAP_ON=0xa1
+SET_MUX_RATIO=0xa8
+SET_COM_OUT_DIR_08=0xc8
+SET_DISP_OFFSET=0xd3
+SET_COM_PIN_CFG=0xda
+SET_DISP_CLK_DIV=0xd5
+SET_PRECHARGE=0xd9
+SET_VCOM_DESEL=0xdb
+SET_CHARGE_PUMP=0x8d
+
+BASE="$(dirname "$0")"
+
+for cmd in $SET_COL_ADDR 0 $(( WIDTH - 1 )) \
+		$SET_PAGE_ADDR 0 $(( (HEIGHT / 8) - 1 )); do
+	vusb-i2cset 0x3c $WR_CMD $cmd
+done
+
+for offset in $(seq 0 7); do
+	vusb-i2cset 0x3c $WR_DATA $("${BASE}/ssd1306-getpixels" "$1" $(( offset * 128 )))
+done

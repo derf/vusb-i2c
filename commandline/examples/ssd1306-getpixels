@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+
+from PIL import Image
+import sys
+
+buf_w = 128
+buf_h = 64
+
+
+def load_image(filename):
+    im = Image.open(filename)
+    w, h = im.size
+    buf = [0 for i in range(buf_w * buf_h // 8)]
+    for y in range(min(h, buf_h)):
+        for x in range(min(w, buf_w)):
+            if im.getpixel((x, y)):
+                buf[(y // 8) * buf_w + x] |= 1 << (y % 8)
+    return buf
+
+
+filename = sys.argv[1]
+offset = int(sys.argv[2])
+
+buf = load_image(filename)
+buf = buf[offset : offset + 128]
+
+print(" ".join(map(str, buf)))
