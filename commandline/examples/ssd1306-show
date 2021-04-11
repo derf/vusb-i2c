@@ -3,8 +3,8 @@
 WR_CMD=0x80
 WR_DATA=0x40
 
-WIDTH=128
-HEIGHT=64
+: ${WIDTH:=128}
+: ${HEIGHT:=64}
 
 SET_CONTRAST=0x81
 SET_ENTIRE_ON=0xa4
@@ -33,5 +33,5 @@ for cmd in $SET_COL_ADDR 0 $(( WIDTH - 1 )) \
 done
 
 for offset in $(seq 0 7); do
-	vusb-i2cset 0x3c $WR_DATA $("${BASE}/ssd1306-getpixels" "$1" $(( offset * 128 )))
+	vusb-i2cset 0x3c $WR_DATA $("${BASE}/ssd1306-getpixels" "$1" $(( offset * 128 )) "${WIDTH}" "${HEIGHT}")
 done

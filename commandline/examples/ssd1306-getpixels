@@ -3,9 +3,6 @@
 from PIL import Image
 import sys
 
-buf_w = 128
-buf_h = 64
-
 
 def load_image(filename):
     im = Image.open(filename)
@@ -20,6 +17,8 @@ def load_image(filename):
 
 filename = sys.argv[1]
 offset = int(sys.argv[2])
+buf_w = int(sys.argv[3])
+buf_h = int(sys.argv[4])
 
 buf = load_image(filename)
 buf = buf[offset : offset + 128]
