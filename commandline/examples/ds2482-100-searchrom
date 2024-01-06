@@ -11,7 +11,7 @@ vusb-i2cset 0x18 0xf0 || echo "Failed to reset chip"
 vusb-i2cset 0x18 0xd2 $CONFIG || echo "Failed to set config"
 vusb-i2cset 0x18 0xb4 || echo "Failed to initiate presence detection (OWR)"
 
-ret=$(( $(vusb-i2cget 0x18 0xe1 0xf0) & 0x02 ))
+ret=$(( $(vusb-i2cget 0x18 1 0xe1 0xf0) & 0x02 ))
 
 if [ "${ret}" = 0 ]; then
 	echo "No presence detected"
@@ -27,7 +27,7 @@ for i in $(seq 1 8); do
 	for j in $(seq 0 7); do
 		vusb-i2cset 0x18 0x78 0x00 || echo "failed to send triplet"
 
-		bit=$(vusb-i2cget 0x18 0xe1 0xf0)
+		bit=$(vusb-i2cget 0x18 1 0xe1 0xf0)
 
 		if [ "${bit}" -ge 80 ]; then
 			byte=$((byte | (1 << j)))
