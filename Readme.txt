@@ -13,7 +13,7 @@ For instance, to set a MicroMoody's color to yellow:
 > vusb-i2cset 17 0 0 255 255 0 0 1
 
 Or, to read out the temperature from a TC74 thermal sensor:
-> vusb-i2cget 77 0
+> vusb-i2cget 77 1 0
 
 
 
