@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 by OBJECTIVE DEVELOPMENT Software GmbH
- *       and (c) 2016 by Daniel Friesel
+ *       and (c) 2016 by Birte Friesel
  * License: GNU GPL v2
  */
 
